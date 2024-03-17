@@ -1,0 +1,40 @@
+name: Build
+ 
+on:
+  push:
+    branches: [ main ]
+  pull_request_target:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions: write-all
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        dir: ["mysql-based"]
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Update Rust toolchain
+      run: rustup update
+    - name: Run tests
+      working-directory: ${{ matrix.dir }}
+      run: cargo test
+    - name: Run clippy
+      working-directory: ${{ matrix.dir }}
+      run: cargo clippy
+    - name: Run fmt
+      working-directory: ${{ matrix.dir }}
+      run: cargo fmt
+
+    - name: docker build
+      working-directory: ${{ matrix.dir }}
+      run: docker build -f ./dockerfile/Dockerfile .

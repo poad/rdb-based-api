@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 axum = "^0.7.4"
 mysql = "^24"
-sqlx = { version = "^0.7", features = [ "runtime-tokio", "tls-rustls", "mysql" ] }
+sqlx = { version = "^0.7", features = [ "runtime-tokio", "mysql" ] }
 hyper = "^1"
 serde = { version = "^1", features = ["derive"] }
 serde_json = "^1"

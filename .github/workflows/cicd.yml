@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches: [ main ]
-  pull_request_target:
+  pull_request:
     branches: [ main ]
 
   workflow_dispatch:
@@ -17,7 +17,7 @@ jobs:
   build:
     strategy:
       matrix:
-        dir: ["mysql-based"]
+        dir: ["mysql-based/r2d2-based", "mysql-based/sqlx-based"]
 
     runs-on: ubuntu-latest
 

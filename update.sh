@@ -13,7 +13,7 @@ if [ $result -ne 0 ]; then
   exit $result
 fi
 
-set -- "mysql-based"
+set -- "mysql-based/r2d2-based" "mysql-based/sqlx-based"
 for target in "$@"; do
   cd "${CURRENT}/${target}" || exit
   result=$?

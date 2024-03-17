@@ -1,7 +1,7 @@
 services:
   mysql:
     image: mysql:latest
-    container_name: mysql
+    container_name: mysql-sqlx
     environment: 
       MYSQL_USER: mysql
       MYSQL_ROOT_PASSWORD: mysql
@@ -18,31 +18,31 @@ services:
       - 33060:33060
       - 33062:33062
     volumes:
-      - db-data:/var/lib/mysql
+      - db-data-sqlx:/var/lib/mysql
       - ./db/etc/mysql/conf.d:/etc/mysql/conf.d
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - mysql
+      - mysql-sqlx
 
   api:
     build:
       context: .
       dockerfile: dockerfile/Dockerfile
-    container_name: rust-mysq-api
+    container_name: rust-mysq-api-sqlx
     environment:
-      DATABASE_URL: mysql://mysql:mysql@mysql:3306/test
+      DATABASE_URL: mysql://mysql:mysql@mysql-sqlx:3306/test
       RUST_LOG: info
     links:
       - mysql
     ports:
       - 3000:3000
     networks:
-      - mysql
+      - mysql-sqlx
 
 networks:
-  mysql:
-    name: mysql
+  mysql-sqlx:
+    name: mysql-sqlx
 
 volumes:
-  db-data:
+  db-data-sqlx:
     driver: local

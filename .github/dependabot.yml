@@ -11,7 +11,7 @@ updates:
       - poad
 
   - package-ecosystem: cargo
-    directory: '/mysql-based/'
+    directory: '/mysql-based/r2d2-based/'
     schedule:
       interval: daily
       timezone: Asia/Tokyo
@@ -21,12 +21,12 @@ updates:
     assignees:
       - poad
     groups:
-      mysql:
+      mysql-r2d2:
         patterns:
           - '*'
 
   - package-ecosystem: docker
-    directory: '/mysql-based/'
+    directory: '/mysql-based/r2d2-based/'
     schedule:
       interval: daily
       timezone: Asia/Tokyo
@@ -36,6 +36,37 @@ updates:
     assignees:
       - poad
     groups:
-      mysql-docker:
+      mysql-r2d2-docker:
+        patterns:
+          - '*'
+
+
+  - package-ecosystem: cargo
+    directory: '/mysql-based/sqlx-based/'
+    schedule:
+      interval: daily
+      timezone: Asia/Tokyo
+    allow:
+      - dependency-type: all
+    rebase-strategy: auto
+    assignees:
+      - poad
+    groups:
+      mysql-r2d2:
+        patterns:
+          - '*'
+
+  - package-ecosystem: docker
+    directory: '/mysql-based/sqlx-based/'
+    schedule:
+      interval: daily
+      timezone: Asia/Tokyo
+    allow:
+      - dependency-type: all
+    rebase-strategy: auto
+    assignees:
+      - poad
+    groups:
+      mysql-r2d2-docker:
         patterns:
           - '*'

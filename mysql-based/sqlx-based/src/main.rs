@@ -96,7 +96,7 @@ async fn search(
                         .iter()
                         .filter(|column| row.try_get_raw(column.name()).is_ok())
                         .map(|column| {
-                            println!("{:?}", column.type_info().name());
+                            trace!("{:?}", column.type_info().name());
                             let type_name = column.type_info().name();
                             let value = match type_name {
                                 "INT" => row.get::<i32, &str>(column.name()).to_string(),

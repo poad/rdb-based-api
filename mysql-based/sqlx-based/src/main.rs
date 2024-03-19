@@ -4,9 +4,11 @@ use axum::{
     routing::get,
     Json, Router,
 };
+use hyper::StatusCode;
 use tower_http::{
     compression::CompressionLayer,
     cors::{Any, CorsLayer},
+    trace::{self, TraceLayer},
 };
 
 use sqlx::FromRow;
@@ -18,12 +20,18 @@ use dotenvy::dotenv;
 
 use serde::{Deserialize, Serialize};
 
+use tracing_subscriber;
+use tracing_log::LogTracer;
+use tracing::Level;
+
+use log::{ trace, error };
+
 #[derive(Deserialize)]
 struct QueryRequest {
     query: String,
 }
 
-#[derive(FromRow, Serialize)]
+#[derive(Debug, FromRow, Serialize)]
 struct Record {
     pk: i32,
     message: String,
@@ -33,6 +41,17 @@ struct Record {
 async fn main() {
     dotenv().ok();
 
+    tracing_subscriber::fmt().json()
+        .with_current_span(false)
+        .with_ansi(false)
+        .without_time()
+        .with_target(false)
+        .with_line_number(true)
+        .with_file(true)
+        .init();
+
+    LogTracer::init().ok();
+
     let url = env::var("DATABASE_URL").unwrap();
     let pool = MySqlPool::connect(&url).await.unwrap();
 
@@ -40,6 +59,13 @@ async fn main() {
         .route("/search", get(search))
         .with_state(pool)
         .layer(CompressionLayer::new())
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(trace::DefaultMakeSpan::new()
+                    .level(Level::INFO))
+                .on_response(trace::DefaultOnResponse::new()
+                    .level(Level::INFO)),
+        )
         .layer(
             CorsLayer::new()
                 .allow_origin(Any)
@@ -55,10 +81,20 @@ async fn search(
     State(pool): State<MySqlPool>,
 ) -> impl IntoResponse {
     let query = request.query;
-    let records = sqlx::query_as::<_, Record>(query.as_str())
+    let result = sqlx::query_as::<_, Record>(query.as_str())
         .fetch_all(&pool)
-        .await
-        .expect("error executing query");
+        .await;
 
-    Json(records)
+    match result {
+        Err(err) => {
+            error!("{:?}", err);
+            Err(StatusCode::FORBIDDEN)
+        },
+        Ok(records) => {
+            trace!("{:?}", records);
+            Ok(Json(records))
+        }
+    }
+
+    
 }

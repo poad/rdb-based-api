@@ -11,37 +11,38 @@ use tower_http::{
     trace::{self, TraceLayer},
 };
 
-use sqlx::FromRow;
+use sqlx::{Column, Row, TypeInfo};
 use sqlx_mysql::MySqlPool;
 
-use std::env;
+use std::{collections::HashMap, env};
 
 use dotenvy::dotenv;
 
 use serde::{Deserialize, Serialize};
 
-use tracing_subscriber;
-use tracing_log::LogTracer;
 use tracing::Level;
+use tracing_log::LogTracer;
 
-use log::{ trace, error };
+use log::{error, trace};
 
 #[derive(Deserialize)]
 struct QueryRequest {
     query: String,
 }
 
-#[derive(Debug, FromRow, Serialize)]
+#[serde_with::skip_serializing_none]
+#[derive(Debug, Serialize)]
 struct Record {
-    pk: i32,
-    message: String,
+    pk: Option<i32>,
+    message: Option<String>,
 }
 
 #[tokio::main]
 async fn main() {
     dotenv().ok();
 
-    tracing_subscriber::fmt().json()
+    tracing_subscriber::fmt()
+        .json()
         .with_current_span(false)
         .with_ansi(false)
         .without_time()
@@ -61,10 +62,8 @@ async fn main() {
         .layer(CompressionLayer::new())
         .layer(
             TraceLayer::new_for_http()
-                .make_span_with(trace::DefaultMakeSpan::new()
-                    .level(Level::INFO))
-                .on_response(trace::DefaultOnResponse::new()
-                    .level(Level::INFO)),
+                .make_span_with(trace::DefaultMakeSpan::new().level(Level::INFO))
+                .on_response(trace::DefaultOnResponse::new().level(Level::INFO)),
         )
         .layer(
             CorsLayer::new()
@@ -81,20 +80,39 @@ async fn search(
     State(pool): State<MySqlPool>,
 ) -> impl IntoResponse {
     let query = request.query;
-    let result = sqlx::query_as::<_, Record>(query.as_str())
-        .fetch_all(&pool)
-        .await;
+    let result = sqlx::query(query.as_str()).fetch_all(&pool).await;
 
     match result {
         Err(err) => {
             error!("{:?}", err);
             Err(StatusCode::FORBIDDEN)
-        },
-        Ok(records) => {
+        }
+        Ok(rows) => {
+            let records = rows
+                .iter()
+                .map(|row| {
+                    let record = row
+                        .columns()
+                        .iter()
+                        .filter(|column| row.try_get_raw(column.name()).is_ok())
+                        .map(|column| {
+                            println!("{:?}", column.type_info().name());
+                            let type_name = column.type_info().name();
+                            let value = match type_name {
+                                "INT" => row.get::<i32, &str>(column.name()).to_string(),
+                                "TEXT" => row.get::<String, &str>(column.name()),
+                                _ => "".to_string(),
+                            };
+                            (column.name(), value)
+                        })
+                        .collect::<HashMap<_, _>>();
+                    let pk = record.get("pk").map(|value| value.parse::<i32>().unwrap());
+                    let message = record.get("message").map(|v| v.to_string());
+                    Record { pk, message }
+                })
+                .collect::<Vec<Record>>();
             trace!("{:?}", records);
             Ok(Json(records))
         }
     }
-
-    
 }

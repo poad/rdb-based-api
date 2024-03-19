@@ -17,7 +17,7 @@ jobs:
   build:
     strategy:
       matrix:
-        dir: ["mysql-based/r2d2-based", "mysql-based/sqlx-based"]
+        dir: ["mysql-based/sqlx-based"]
 
     runs-on: ubuntu-latest
 

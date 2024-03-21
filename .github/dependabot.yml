@@ -21,7 +21,7 @@ updates:
     assignees:
       - poad
     groups:
-      mysql-r2d2:
+      mysql-sqlx:
         patterns:
           - '*'
 
@@ -36,6 +36,6 @@ updates:
     assignees:
       - poad
     groups:
-      mysql-r2d2-docker:
+      mysql-sqlx-docker:
         patterns:
           - '*'

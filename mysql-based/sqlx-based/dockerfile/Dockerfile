@@ -11,14 +11,12 @@ RUN BUILD_OPTIONS=""; TARGET="" \
   && if [ "${TARGETPLATFORM}" != "${BUILDPLATFORM}" ]; then \
         case "${TARGETPLATFORM}" in \
             'linux/arm64') \
-                dpkg --add-architecture aarch64 \
                 apt update -qqqqy \
                 apt install -qqqqy --no-install-recommends g++-aarch64-linux-gnu libc6-dev-arm64-cross crossbuild-essential-arm64  \
                 TARGET="aarch64-unknown-linux-gnu" \
                 BUILD_OPTIONS="--target=${TARGET}" \
                 ;; \
             'linux/amd64') \
-                dpkg --add-architecture amd64 \
                 apt update -qqqqy \
                 apt install -qqqqy --no-install-recommends g++-x86_64-linux-gnu libc6-dev-amd64-cross crossbuild-essential-amd64 \
                 TARGET="x86_64-unknown-linux-gnu" \

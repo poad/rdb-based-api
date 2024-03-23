@@ -28,6 +28,9 @@ services:
     build:
       context: .
       dockerfile: dockerfile/Dockerfile
+      platforms:
+       - linux/arm64
+       - linux/amd64
     container_name: rust-mysq-api-sqlx
     environment:
       DATABASE_URL: mysql://mysql:mysql@mysql-sqlx:3306/test

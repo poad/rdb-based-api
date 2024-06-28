@@ -20,4 +20,4 @@ dotenvy = "^0.15.7"
 tracing = "^0.1.40"
 tracing-subscriber = { version = "^0.3.18", features = ["json"] }
 tracing-log = "^0.2.0"
-log = "^0.4.21"
+log = "^0.4.22"

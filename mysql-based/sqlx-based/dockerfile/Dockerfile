@@ -41,8 +41,6 @@ COPY ./Cargo.toml ./Cargo.toml
 RUN cargo build --release ${BUILD_OPTIONS}
 RUN rm src/*.rs
 
-WORKDIR /root/work
-
 COPY ./src ./src
 
 RUN cargo build --release ${BUILD_OPTIONS}

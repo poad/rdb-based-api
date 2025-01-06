@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sqlx = { version = "^0.8.2", features = [ "runtime-tokio", "mysql" ] }
+sqlx = { version = "^0.8.3", features = [ "runtime-tokio", "mysql" ] }
 sqlx-mysql = "^0.8.2"
 mysql = { version = "^25.0.1" }
 serde = { version = "^1", features = ["derive"] }

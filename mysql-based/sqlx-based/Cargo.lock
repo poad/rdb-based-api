@@ -219,9 +219,9 @@ checksum = "d71b6127be86fdcfddb610f7182ac57211d4b18a3e9c82eb2d17662f2227ad6a"
 
 [[package]]
 name = "cc"
-version = "1.2.44"
+version = "1.2.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "37521ac7aabe3d13122dc382493e20c9416f299d2ccd5b3a5340a2570cdeb0f3"
+checksum = "35900b6c8d709fb1d854671ae27aeaa9eec2f8b01b364e1619a40da3e6fe2afe"
 dependencies = [
  "find-msvc-tools",
  "jobserver",
@@ -1613,9 +1613,9 @@ dependencies = [
 
 [[package]]
 name = "schemars"
-version = "1.0.5"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1317c3bf3e7df961da95b0a56a172a02abead31276215a0497241a7624b487ce"
+checksum = "9558e172d4e8533736ba97870c4b2cd63f84b382a3d6eb063da41b91cce17289"
 dependencies = [
  "dyn-clone",
  "ref-cast",
@@ -1707,7 +1707,7 @@ dependencies = [
  "indexmap 1.9.3",
  "indexmap 2.12.0",
  "schemars 0.9.0",
- "schemars 1.0.5",
+ "schemars 1.1.0",
  "serde_core",
  "serde_json",
  "serde_with_macros",

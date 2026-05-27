@@ -6,11 +6,10 @@ CURRENT=$(cd "$(dirname "$0")" || exit;pwd)
 echo "${CURRENT}"
 
 cd "${CURRENT}" || exit
-git pull --prune
-result=$?
-if [ $result -ne 0 ]; then
+
+if ! (git pull --prune); then
   cd "${CUR}" || exit
-  exit $result
+  exit 1
 fi
 
 if ! (disable-checkout-persist-credentials); then

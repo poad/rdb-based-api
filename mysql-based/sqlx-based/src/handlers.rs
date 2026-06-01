@@ -31,7 +31,9 @@ pub(super) async fn search(
     State(pool): State<MySqlPool>,
 ) -> impl IntoResponse {
     let query = request.query;
-    let result = sqlx::query(query.as_str()).fetch_all(&pool).await;
+    let result = sqlx::query(
+        sqlx::AssertSqlSafe(query.as_str())
+    ).fetch_all(&pool).await;
 
     match result {
         Err(err) => {
